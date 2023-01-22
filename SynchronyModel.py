@@ -19,6 +19,7 @@ class SynchronyModel:
         self.client = carla.Client('localhost', 2000)
         self.client.set_timeout(5.0)
         self.world = self.client.get_world()
+        self.client.load_world('Town05') # added change world after every 350 frames
         self.traffic_manager = self.client.get_trafficmanager()
         self.init_settings = None
         self.frame = None

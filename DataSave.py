@@ -43,13 +43,14 @@ class DataSave:
         print("当前存在{}个数据".format(num_existing_data_files))
         if num_existing_data_files == 0:
             return 0
-        answer = input(
-            "There already exists a dataset in {}. Would you like to (O)verwrite or (A)ppend the dataset? (O/A)".format(
-                self.OUTPUT_FOLDER))
-        if answer.upper() == "O":
-            logging.info(
-                "Resetting frame number to 0 and overwriting existing")
-            return 0
+        # keep writing, not overwriting
+        # answer = input(
+        #     "There already exists a dataset in {}. Would you like to (O)verwrite or (A)ppend the dataset? (O/A)".format(
+        #         self.OUTPUT_FOLDER))
+        # if answer.upper() == "O":
+        #     logging.info(
+        #         "Resetting frame number to 0 and overwriting existing")
+        #     return 0
         logging.info("Continuing recording data on frame number {}".format(
             num_existing_data_files))
         return num_existing_data_files
