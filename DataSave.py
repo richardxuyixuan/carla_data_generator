@@ -18,14 +18,17 @@ class DataSave:
         """ 生成数据存储的路径"""
         PHASE = "training"
         self.OUTPUT_FOLDER = os.path.join(root_path, PHASE)
-        folders = ['calib', 'image', 'kitti_label', 'carla_label', 'velodyne']
+        folders = ['calib', 'image', 'kitti_label', 'carla_label', 'velodyne', 'kitti_velodyne', 'nusc_velodyne']
 
         for folder in folders:
             directory = os.path.join(self.OUTPUT_FOLDER, folder)
             if not os.path.exists(directory):
                 os.makedirs(directory)
 
+        self.LIDAR_PATH_KITTI = os.path.join(self.OUTPUT_FOLDER, 'kitti_velodyne/{0:06}.bin')
+        self.LIDAR_PATH_NUSC = os.path.join(self.OUTPUT_FOLDER, 'nusc_velodyne/{0:06}.bin')
         self.LIDAR_PATH = os.path.join(self.OUTPUT_FOLDER, 'velodyne/{0:06}.bin')
+
         self.KITTI_LABEL_PATH = os.path.join(self.OUTPUT_FOLDER, 'kitti_label/{0:06}.txt')
         self.CARLA_LABEL_PATH = os.path.join(self.OUTPUT_FOLDER, 'carla_label/{0:06}.txt')
         self.IMAGE_PATH = os.path.join(self.OUTPUT_FOLDER, 'image/{0:06}.png')
@@ -53,6 +56,8 @@ class DataSave:
 
     def save_training_files(self, data):
 
+        kitti_lidar_fname = self.LIDAR_PATH_KITTI.format(self.captured_frame_no)
+        nusc_lidar_fname = self.LIDAR_PATH_NUSC.format(self.captured_frame_no)
         lidar_fname = self.LIDAR_PATH.format(self.captured_frame_no)
         kitti_label_fname = self.KITTI_LABEL_PATH.format(self.captured_frame_no)
         carla_label_fname = self.CARLA_LABEL_PATH.format(self.captured_frame_no)
@@ -69,5 +74,8 @@ class DataSave:
             save_label_data(kitti_label_fname, dt["kitti_datapoints"])
             save_label_data(carla_label_fname, dt['carla_datapoints'])
             save_calibration_matrices([camera_transform, lidar_transform], calib_filename, dt["intrinsic"])
-            save_lidar_data(lidar_fname, dt["sensor_data"][2])
+            save_lidar_data(kitti_lidar_fname, dt["sensor_data"][2])
+            save_lidar_data(nusc_lidar_fname, dt["sensor_data"][3])
+            save_lidar_data(lidar_fname, dt["sensor_data"][4])
+
         self.captured_frame_no += 1

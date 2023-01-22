@@ -1,6 +1,11 @@
 import sys
 import yaml
-sys.path.append("/opt/carla-simulator/PythonAPI/carla/dist/carla-0.9.12-py3.7-linux-x86_64.egg")
+import glob
+
+try:
+    sys.path.append(glob.glob('/home/user/Documents/carla/PythonAPI/carla/dist/carla-0.9.13-py3.7-linux-x86_64.egg')[0])
+except IndexError:
+    pass
 
 import carla
 

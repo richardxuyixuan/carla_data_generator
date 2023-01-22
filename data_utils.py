@@ -110,8 +110,11 @@ def is_visible_by_bbox(agent, obj, rgb_image, depth_data, intrinsic, extrinsic):
 
 def obj_type(obj):
     if isinstance(obj, carla.EnvironmentObject):
+        if obj.type == 'Vehicles':
+            print(obj.name)
         return obj.type
     else:
+        print(obj.type_id)
         if obj.type_id.find('walker') is not -1:
             return 'Pedestrian'
         if obj.type_id.find('vehicle') is not -1:

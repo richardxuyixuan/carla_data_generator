@@ -17,10 +17,40 @@ SENSOR_CONFIG:
     BLUEPRINT: sensor.camera.depth
     ATTRIBUTE: { image_size_x: 720, image_size_y: 360, fov: 90 }
 
-  LIDAR:
+  LIDAR_KITTI:
     TRANSFORM: { location: [ 0, 0, 1.6 ], rotation: [ 0, 0, 0 ] }
     BLUEPRINT: sensor.lidar.ray_cast
-    ATTRIBUTE: {range: 70, rotation_frequency: 20, lower_fov: -45, points_per_second: 1280000, channels: 64}
+    ATTRIBUTE: {range: 70, points_per_second: 1280000, channels: 64, rotation_frequency: 10, upper_fov: 10, lower_fov: -30}
+
+  LIDAR_NUSC:
+    TRANSFORM: { location: [ 0, 0, 1.6 ], rotation: [ 0, 0, 0 ] }
+    BLUEPRINT: sensor.lidar.ray_cast
+    ATTRIBUTE: {range: 70, rotation_frequency: 10, lower_fov: -45, points_per_second: 1280000, channels: 64}
+
+  LIDAR: # perfect lidar with no noise and highest resolution
+    TRANSFORM: { location: [ 0, 0, 1.6 ], rotation: [ 0, 0, 0 ] }
+    BLUEPRINT: sensor.lidar.ray_cast
+    ATTRIBUTE: {range: 120, points_per_second: 64000000, channels: 256, rotation_frequency: 10, upper_fov: 10, lower_fov: -30, dropoff_general_rate: 0, dropoff_intensity_limit: 0, dropoff_zero_intensity: 0}
+    # points per channel each step = points per second / (fps * channels) = 2500
+
+## Modify the attributes of the blueprint to set image resolution and field of view.
+#lidar_full.set_attribute('channels', '256')
+#lidar_full.set_attribute('range', '120')
+#lidar_full.set_attribute('points_per_second', '64000000')
+## points per channel each step = points per second / (fps * channels) = 2500
+## typically for nuscenes and kitti, points per channel each step is around 2000-2100
+#lidar_full.set_attribute('rotation_frequency', '10')
+#lidar_full.set_attribute('upper_fov', '10')
+#lidar_full.set_attribute('lower_fov', '-30')
+#lidar_full.set_attribute('horizontal_fov', '360')
+## lidar_full.set_attribute('atmosphere_attenuation_rate', '?')
+#lidar_full.set_attribute('dropoff_general_rate', '0') # unrealistic zero dropoff for ground truth
+#lidar_full.set_attribute('dropoff_intensity_limit', '0')
+#lidar_full.set_attribute('dropoff_zero_intensity', '0')
+#lidar_full.set_attribute('sensor_tick', '1.0') # simulation seconds between sensor captures (ticks)
+#lidar_full.set_attribute('noise_stddev', '0') # std of the noise model to disturb each point along the vector of its raycast.
+## kitti point_cloud_range = [0, -40, -3, 70.4, 40, 1]
+## nuscenes point_cloud_range = [-50, -50, -5, 50, 50, 3]
 
 FILTER_CONFIG:
   PRELIMINARY_FILTER_DISTANCE: 50
