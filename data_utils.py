@@ -109,16 +109,32 @@ def is_visible_by_bbox(agent, obj, rgb_image, depth_data, intrinsic, extrinsic):
     return None, None
 
 def obj_type(obj):
+    bikes_items = [
+        'vehicle.bh.crossbike',
+        'vehicle.diamondback.century',
+        'vehicle.gazelle.omafiets',
+        'vehicle.harley-davidson.low_rider',
+        'vehicle.kawasaki.ninja',
+        'vehicle.vespa.zx125',
+        'vehicle.yamaha.yzf'
+    ]
     if isinstance(obj, carla.EnvironmentObject):
         if obj.type == 'Vehicles':
             print(obj.name)
-        return obj.type
+            if obj.name in bikes_items:
+                return 'Bike'
+            else:
+                return 'Car'
+        else:
+            return obj.type
     else:
-        print(obj.type_id)
         if obj.type_id.find('walker') is not -1:
             return 'Pedestrian'
         if obj.type_id.find('vehicle') is not -1:
-            return 'Car'
+            if obj.type_id in bikes_items:
+                return 'Bike'
+            else:
+                return 'Car'
         return None
 
 def get_relative_rotation_y(agent_rotation, obj_rotation):

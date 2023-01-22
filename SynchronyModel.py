@@ -87,7 +87,7 @@ class SynchronyModel:
         # 生成行人actors
         blueprintsWalkers = self.world.get_blueprint_library().filter("walker.pedestrian.*")
         spawn_points = []
-        for i in range(num_of_walkers):
+        for i in range(num_of_walkers+1):
             spawn_point = carla.Transform()
             loc = self.world.get_random_location_from_navigation()
             if loc is not None:
