@@ -10,13 +10,13 @@ class DataSave:
         self.CARLA_LABEL_PATH = None
         self.IMAGE_PATH = None
         self.CALIBRATION_PATH = None
+        self.phase = self.cfg["SAVE_CONFIG"]["TRAINVAL"]
         self._generate_path(self.cfg["SAVE_CONFIG"]["ROOT_PATH"])
         self.captured_frame_no = self._current_captured_frame_num()
 
-
     def _generate_path(self,root_path):
         """ 生成数据存储的路径"""
-        PHASE = "training"
+        PHASE = self.phase
         self.OUTPUT_FOLDER = os.path.join(root_path, PHASE)
         folders = ['calib', 'image', 'kitti_label', 'carla_label', 'velodyne', 'kitti_velodyne', 'nusc_velodyne']
 
@@ -77,6 +77,6 @@ class DataSave:
             save_calibration_matrices([camera_transform, lidar_transform], calib_filename, dt["intrinsic"])
             save_lidar_data(kitti_lidar_fname, dt["sensor_data"][2])
             save_lidar_data(nusc_lidar_fname, dt["sensor_data"][3])
-            save_lidar_data(lidar_fname, dt["sensor_data"][4])
+            save_sem_lidar_data(lidar_fname, dt["sensor_data"][4], dt["sensor_data"][5], dt["sensor_data"][6], dt["sensor_data"][7])
 
         self.captured_frame_no += 1

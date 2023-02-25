@@ -53,11 +53,79 @@ def save_lidar_data(filename, point_cloud, format="bin"):
     if format == "bin":
         point_cloud = np.copy(np.frombuffer(point_cloud.raw_data, dtype=np.dtype('f4')))
         point_cloud = np.reshape(point_cloud, (int(point_cloud.shape[0] / 4), 4))
-        point_cloud = point_cloud[:, :-1]
+        # point_cloud = point_cloud[:, :-1]
 
-        lidar_array = [[point[0], -point[1], point[2], 1.0]
+        lidar_array = [[point[0], -point[1], point[2], point[3]]
                        for point in point_cloud]
         lidar_array = np.array(lidar_array).astype(np.float32)
+        logging.debug("Lidar min/max of x: {} {}".format(
+                      lidar_array[:, 0].min(), lidar_array[:, 0].max()))
+        logging.debug("Lidar min/max of y: {} {}".format(
+                      lidar_array[:, 1].min(), lidar_array[:, 0].max()))
+        logging.debug("Lidar min/max of z: {} {}".format(
+                      lidar_array[:, 2].min(), lidar_array[:, 0].max()))
+        lidar_array.tofile(filename)
+
+def save_sem_lidar_data(filename, point_cloud, point_cloud_sem, vertical_point_cloud, vertical_point_cloud_sem, format="bin"):
+    """ Saves lidar data to given filename, according to the lidar data format.
+        bin is used for KITTI-data format, while .ply is the regular point cloud format
+        In Unreal, the coordinate system of the engine is defined as, which is the same as the lidar points
+        z
+        ^   ^ x
+        |  /
+        | /
+        |/____> y
+              z
+              ^   ^ x
+              |  /
+              | /
+        y<____|/
+        Which is a right handed coordinate sylstem
+        Therefore, we need to flip the y axis of the lidar in order to get the correct lidar format for kitti.
+        This corresponds to the following changes from Carla to Kitti
+            Carla: X   Y   Z
+            KITTI: X  -Y   Z
+        NOTE: We do not flip the coordinate system when saving to .ply.
+    """
+    logging.info("Wrote lidar data to %s", filename)
+
+    if format == "bin":
+        point_cloud = np.copy(np.frombuffer(point_cloud.raw_data, dtype=np.dtype('f4')))
+        point_cloud = np.reshape(point_cloud, (int(point_cloud.shape[0] / 4), 4))
+
+        dt = np.dtype([
+            ('x', np.float32), ('y', np.float32), ('z', np.float32),
+            ('CosAngle', np.float32), ('ObjIdx', np.uint32), ('ObjTag', np.uint32)])
+        point_cloud_sem = np.copy(np.frombuffer(point_cloud_sem.raw_data, dtype=dt))
+        lidar_array = [[point['x'], -point['y'], point['z'], point['ObjIdx'], point['ObjTag']]
+                       for point in point_cloud_sem]
+        lidar_array = np.array(lidar_array).astype(np.float32)
+        point_cloud_intensity = point_cloud[:, -1:]
+        lidar_array = np.concatenate((lidar_array, point_cloud_intensity), axis=1)
+
+        vertical_point_cloud = np.copy(np.frombuffer(vertical_point_cloud.raw_data, dtype=np.dtype('f4')))
+        vertical_point_cloud = np.reshape(vertical_point_cloud, (int(vertical_point_cloud.shape[0] / 4), 4))
+
+        dt = np.dtype([
+            ('x', np.float32), ('y', np.float32), ('z', np.float32),
+            ('CosAngle', np.float32), ('ObjIdx', np.uint32), ('ObjTag', np.uint32)])
+        vertical_point_cloud_sem = np.copy(np.frombuffer(vertical_point_cloud_sem.raw_data, dtype=dt))
+        vertical_lidar_array = [[point['x'], -point['y'], point['z'], point['ObjIdx'], point['ObjTag']]
+                       for point in vertical_point_cloud_sem]
+        vertical_lidar_array = np.array(vertical_lidar_array).astype(np.float32)
+        vertical_point_cloud_intensity = vertical_point_cloud[:, -1:]
+        vertical_lidar_array = np.concatenate((vertical_lidar_array, vertical_point_cloud_intensity), axis=1)
+
+        _theta = - math.pi / 2
+
+        R_x = np.array([[math.cos(_theta), 0, math.sin(_theta)],
+                        [0, 1, 0],
+                        [-math.sin(_theta), 0, math.cos(_theta)]])
+
+        vertical_lidar_array[:, :3] = np.matmul(vertical_lidar_array[:, :3], R_x)
+        vertical_lidar_array[:, 2] += 70.0 - 1.6
+        lidar_array = np.concatenate((lidar_array, vertical_lidar_array), axis=0)
+
         logging.debug("Lidar min/max of x: {} {}".format(
                       lidar_array[:, 0].min(), lidar_array[:, 0].max()))
         logging.debug("Lidar min/max of y: {} {}".format(
