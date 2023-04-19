@@ -304,7 +304,7 @@ def save_to_png(pcd, filename, ld= None, lpd = None, zoom_level = 1.5):
 
 
 def main():
-    root_dir = '/home/user/Documents/carla_data/DataGenerator/data/sem_test/train/velodyne'
+    root_dir = '/media/user/storage/data/sem_test/train/velodyne'
     file_dir = os.listdir(root_dir)
     idx = 0
     for file in file_dir:
@@ -312,31 +312,5 @@ def main():
         gen_figures(batch_dict, 'vis_dir', idx, threed=True)
         idx += 1
 
-
-color_map = {
-    0: np.array([0, 0, 0]), # unlabled
-    1: np.array([0, 0, 0]),  # Building
-    2: np.array([0, 0, 0]),  # unlabled
-    3: np.array([0, 0, 0]),  # unlabled
-    4: np.array([0, 0, 0]),  # unlabled
-    5: np.array([0, 0, 0]),  # unlabled
-    6: np.array([0, 0, 0]),  # unlabled
-    7: np.array([0, 0, 0]),  # unlabled
-    8: np.array([0, 0, 0]),  # unlabled
-    9: np.array([0, 0, 0]),  # unlabled
-    10: np.array([0, 0, 0]),  # unlabled
-    11: np.array([0, 0, 0]),  # unlabled
-    12: np.array([0, 0, 0]),  # unlabled
-    13: np.array([0, 0, 0]),  # unlabled
-    14: np.array([0, 0, 0]),  # unlabled
-    15: np.array([0, 0, 0]),  # unlabled
-    16: np.array([0, 0, 0]),  # unlabled
-    17: np.array([0, 0, 0]),  # unlabled
-    18: np.array([0, 0, 0]),  # unlabled
-    19: np.array([0, 0, 0]),  # unlabled
-    20: np.array([0, 0, 0]),  # unlabled
-    21: np.array([0, 0, 0]),  # unlabled
-    22: np.array([0, 0, 0])  # unlabled
-}
 if __name__ == '__main__':
     main()

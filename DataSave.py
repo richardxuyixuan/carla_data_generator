@@ -29,17 +29,17 @@ class DataSave:
         self.LIDAR_PATH_NUSC = os.path.join(self.OUTPUT_FOLDER, 'nusc_velodyne/{0:06}.bin')
         self.LIDAR_PATH = os.path.join(self.OUTPUT_FOLDER, 'velodyne/{0:06}.bin')
 
-        self.KITTI_LABEL_PATH = os.path.join(self.OUTPUT_FOLDER, 'kitti_label/{0:06}.txt')
-        self.CARLA_LABEL_PATH = os.path.join(self.OUTPUT_FOLDER, 'carla_label/{0:06}.txt')
+        # self.KITTI_LABEL_PATH = os.path.join(self.OUTPUT_FOLDER, 'kitti_label/{0:06}.txt')
+        # self.CARLA_LABEL_PATH = os.path.join(self.OUTPUT_FOLDER, 'carla_label/{0:06}.txt')
         self.IMAGE_PATH = os.path.join(self.OUTPUT_FOLDER, 'image/{0:06}.png')
         self.CALIBRATION_PATH = os.path.join(self.OUTPUT_FOLDER, 'calib/{0:06}.txt')
 
 
     def _current_captured_frame_num(self):
         """获取文件夹中存在的数据量"""
-        label_path = os.path.join(self.OUTPUT_FOLDER, 'kitti_label/')
+        label_path = os.path.join(self.OUTPUT_FOLDER, 'image/')
         num_existing_data_files = len(
-            [name for name in os.listdir(label_path) if name.endswith('.txt')])
+            [name for name in os.listdir(label_path) if name.endswith('.png')])
         print("当前存在{}个数据".format(num_existing_data_files))
         if num_existing_data_files == 0:
             return 0
@@ -60,8 +60,8 @@ class DataSave:
         kitti_lidar_fname = self.LIDAR_PATH_KITTI.format(self.captured_frame_no)
         nusc_lidar_fname = self.LIDAR_PATH_NUSC.format(self.captured_frame_no)
         lidar_fname = self.LIDAR_PATH.format(self.captured_frame_no)
-        kitti_label_fname = self.KITTI_LABEL_PATH.format(self.captured_frame_no)
-        carla_label_fname = self.CARLA_LABEL_PATH.format(self.captured_frame_no)
+        # kitti_label_fname = self.KITTI_LABEL_PATH.format(self.captured_frame_no)
+        # carla_label_fname = self.CARLA_LABEL_PATH.format(self.captured_frame_no)
         img_fname = self.IMAGE_PATH.format(self.captured_frame_no)
         calib_filename = self.CALIBRATION_PATH.format(self.captured_frame_no)
 
@@ -72,11 +72,12 @@ class DataSave:
 
             save_ref_files(self.OUTPUT_FOLDER, self.captured_frame_no)
             save_image_data(img_fname, dt["sensor_data"][0])
-            save_label_data(kitti_label_fname, dt["kitti_datapoints"])
-            save_label_data(carla_label_fname, dt['carla_datapoints'])
+            # save_label_data(kitti_label_fname, dt["kitti_datapoints"])
+            # save_label_data(carla_label_fname, dt['carla_datapoints'])
             save_calibration_matrices([camera_transform, lidar_transform], calib_filename, dt["intrinsic"])
             save_lidar_data(kitti_lidar_fname, dt["sensor_data"][2])
             save_lidar_data(nusc_lidar_fname, dt["sensor_data"][3])
-            save_sem_lidar_data(lidar_fname, dt["sensor_data"][4], dt["sensor_data"][5], dt["sensor_data"][6], dt["sensor_data"][7])
+            # save_sem_lidar_data(lidar_fname, dt["sensor_data"][4], dt["sensor_data"][5], dt["sensor_data"][6], dt["sensor_data"][7])
+            save_sem_lidar_data(lidar_fname, dt["sensor_data"][4], dt["sensor_data"][5])
 
         self.captured_frame_no += 1
